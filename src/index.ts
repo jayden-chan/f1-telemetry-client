@@ -15,10 +15,32 @@ import {Options} from './types';
 const DEFAULT_PORT = 20777;
 const BIGINT_ENABLED = true;
 
+export interface F1TelemetryClientEvents {
+  motion: (data: packetTypes.PacketMotionData) => void;
+  session: (data: packetTypes.PacketSessionData) => void;
+  lapData: (data: packetTypes.PacketLapData) => void;
+  event: (data: packetTypes.PacketEventData) => void;
+  participants: (data: packetTypes.PacketParticipantsData) => void;
+  carSetups: (data: packetTypes.PacketCarSetupData) => void;
+  carTelemetry: (data: packetTypes.PacketCarTelemetryData) => void;
+  carStatus: (data: packetTypes.PacketCarStatusData) => void;
+  finalClassification:
+      (data: packetTypes.PacketFinalClassificationData) => void;
+  lobbyInfo: (data: packetTypes.PacketLobbyInfoData) => void;
+}
+
+export declare interface F1TelemetryClient {
+  on<U extends keyof F1TelemetryClientEvents>(
+      event: U, listener: F1TelemetryClientEvents[U]): this;
+
+  emit<U extends keyof F1TelemetryClientEvents>(
+      event: U, ...args: Parameters<F1TelemetryClientEvents[U]>): boolean;
+}
+
 /**
  *
  */
-class F1TelemetryClient extends EventEmitter {
+export class F1TelemetryClient extends EventEmitter {
   port: number;
   bigintEnabled: boolean;
   client?: dgram.Socket;
@@ -109,8 +131,10 @@ class F1TelemetryClient extends EventEmitter {
     }
 
     const packetData = new parser(message, m_packetFormat, this.bigintEnabled);
-    const packetKeys = Object.keys(constants.PACKETS);
+    const packetKeys =
+        Object.keys(constants.PACKETS) as Array<keyof typeof constants.PACKETS>;
 
+    // @ts-ignore
     this.emit(packetKeys[m_packetId], packetData.data);
   }
 
@@ -152,10 +176,4 @@ class F1TelemetryClient extends EventEmitter {
   }
 }
 
-export {
-  F1TelemetryClient,
-  constants,
-  constantsTypes,
-  packetTypes,
-  DEFAULT_PORT,
-};
+export {constants, constantsTypes, packetTypes, DEFAULT_PORT};
