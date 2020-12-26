@@ -4,8 +4,6 @@ import * as dgram from 'dgram';
 import {EventEmitter} from 'events';
 import {AddressInfo} from 'net';
 
-const util = require('util');
-
 import * as constants from './constants';
 import * as constantsTypes from './constants/types';
 import {PacketCarSetupDataParser, PacketCarStatusDataParser, PacketCarTelemetryDataParser, PacketEventDataParser, PacketFinalClassificationDataParser, PacketFormatParser, PacketHeaderParser, PacketLapDataParser, PacketLobbyInfoDataParser, PacketMotionDataParser, PacketParticipantsDataParser, PacketSessionDataParser,} from './parsers/packets';
